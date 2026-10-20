@@ -12,4 +12,14 @@ Option Explicit On
 
 
 Partial Public Class Contact
+
+    '''<summary>
+    '''GridView1 control.
+    '''</summary>
+    Protected WithEvents GridView1 As Global.System.Web.UI.WebControls.GridView
+
+    '''<summary>
+    '''SqlDataSource1 control.
+    '''</summary>
+    Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
 End Class
