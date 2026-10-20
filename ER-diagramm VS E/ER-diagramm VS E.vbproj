@@ -136,6 +136,7 @@
   <ItemGroup>
     <Content Include="About.aspx" />
     <Content Include="Contact2.aspx" />
+    <Content Include="Contact3.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -225,6 +226,13 @@
     </Compile>
     <Compile Include="About.aspx.vb">
       <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Contact3.aspx.designer.vb">
+      <DependentUpon>Contact3.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Contact3.aspx.vb">
+      <DependentUpon>Contact3.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="Contact2.aspx.designer.vb">
