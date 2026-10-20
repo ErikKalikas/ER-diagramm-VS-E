@@ -1,77 +1,65 @@
-﻿<%@ Page Title="Puudumised" Language="VB" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Contact3.aspx.vb" Inherits="ER_diagramm_VS_E.Contact3" %>
+﻿<%@ Page Title="Lisa järjekorda veebivorm" Language="VB" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Contact3.aspx.vb" Inherits="ER_diagramm_VS_E.Contact3" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+    <h2><%: Title %></h2>
 
-    <h3>Lapsed</h3>
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"
-        DataKeyNames="laps_id" DataSourceID="SqlDataSourceLaps"
-        OnSelectedIndexChanged="GridView1_SelectedIndexChanged" CssClass="table">
-        <Columns>
-            <asp:CommandField ShowSelectButton="True" SelectText="Vali" />
-            <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" />
-            <asp:BoundField DataField="perenimi" HeaderText="Perenimi" />
-            <asp:BoundField DataField="isikukood" HeaderText="Isikukood" />
-            <asp:BoundField DataField="synniaeg" HeaderText="Sünniaeg" DataFormatString="{0:dd.MM.yyyy}" />
-        </Columns>
-        <SelectedRowStyle BackColor="#cfe2ff" />
-    </asp:GridView>
-
-    <asp:SqlDataSource ID="SqlDataSourceLaps" runat="server"
-        ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
-        SelectCommand="SELECT laps_id, eesnimi, perenimi, isikukood, synniaeg FROM Laps ORDER BY perenimi"></asp:SqlDataSource>
-
-    <h3>Valitud lapse puudumised</h3>
-    <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False"
-        DataKeyNames="puudumine_id" DataSourceID="SqlDataSourcePuudumine"
-        EmptyDataText="Puudumisi pole (või last pole valitud)." CssClass="table">
-        <Columns>
-            <asp:CommandField ShowDeleteButton="True" DeleteText="Kustuta" />
-            <asp:BoundField DataField="alguse_kp" HeaderText="Algus" DataFormatString="{0:dd.MM.yyyy}" />
-            <asp:BoundField DataField="lopu_kp" HeaderText="Lõpp" DataFormatString="{0:dd.MM.yyyy}" />
-            <asp:BoundField DataField="pohjus" HeaderText="Põhjus" />
-        </Columns>
-    </asp:GridView>
-
-    <asp:SqlDataSource ID="SqlDataSourcePuudumine" runat="server"
-        ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
-        SelectCommand="SELECT puudumine_id, alguse_kp, lopu_kp, pohjus FROM Puudumine WHERE laps_id = @laps_id ORDER BY alguse_kp"
-        DeleteCommand="DELETE FROM Puudumine WHERE puudumine_id = @puudumine_id">
-        <SelectParameters>
-            <asp:ControlParameter Name="laps_id" ControlID="GridView1" PropertyName="SelectedValue" Type="Int32" />
-        </SelectParameters>
-        <DeleteParameters>
-            <asp:Parameter Name="puudumine_id" Type="Int32" />
-        </DeleteParameters>
-    </asp:SqlDataSource>
-
-    <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False"
-        DefaultMode="Insert" DataSourceID="SqlDataSourceLisa" Visible="False"
-        OnItemInserted="DetailsView1_ItemInserted" HeaderText="Lisa puudumine" CssClass="table">
+    <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" DataKeyNames="jarjekord_id"
+        DataSourceID="SqlDataSource1_jarjekord" DefaultMode="Insert" Height="50px" Width="400px">
         <Fields>
-            <asp:BoundField DataField="alguse_kp" HeaderText="Algus (pp.kk.aaaa)" />
-            <asp:BoundField DataField="lopu_kp" HeaderText="Lõpp (pp.kk.aaaa)" />
-            <asp:TemplateField HeaderText="Põhjus">
+            <asp:BoundField DataField="jarjekord_id" HeaderText="jarjekord_id" InsertVisible="False" ReadOnly="True" SortExpression="jarjekord_id" />
+            <asp:TemplateField HeaderText="laps_id" SortExpression="laps_id">
                 <InsertItemTemplate>
-                    <asp:DropDownList ID="ddlPohjus" runat="server" SelectedValue='<%# Bind("pohjus") %>'>
-                        <asp:ListItem Value="haigus">haigus</asp:ListItem>
-                        <asp:ListItem Value="puhkus">puhkus</asp:ListItem>
-                        <asp:ListItem Value="muu">muu</asp:ListItem>
+                    <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1_laps"
+                        DataTextField="nimi" DataValueField="laps_id" SelectedValue='<%# Bind("laps_id") %>'>
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="SqlDataSource1_laps" runat="server"
+                        ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
+                        SelectCommand="SELECT laps_id, eesnimi + ' ' + perenimi AS nimi FROM [Laps] ORDER BY perenimi"></asp:SqlDataSource>
+                </InsertItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="soovitud_ruhm_id" SortExpression="soovitud_ruhm_id">
+                <InsertItemTemplate>
+                    <asp:DropDownList ID="DropDownList2" runat="server" DataSourceID="SqlDataSource1_ruhm"
+                        DataTextField="nimetus" DataValueField="ruhm_id" SelectedValue='<%# Bind("soovitud_ruhm_id") %>'>
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="SqlDataSource1_ruhm" runat="server"
+                        ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
+                        SelectCommand="SELECT * FROM [Ruhm]"></asp:SqlDataSource>
+                </InsertItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="staatus" SortExpression="staatus">
+                <InsertItemTemplate>
+                    <asp:DropDownList ID="DropDownList3" runat="server" SelectedValue='<%# Bind("staatus") %>'>
+                        <asp:ListItem>ootel</asp:ListItem>
+                        <asp:ListItem>pakutud</asp:ListItem>
+                        <asp:ListItem>vastu võetud</asp:ListItem>
+                        <asp:ListItem>tühistatud</asp:ListItem>
                     </asp:DropDownList>
                 </InsertItemTemplate>
             </asp:TemplateField>
-            <asp:CommandField ShowInsertButton="True" InsertText="Lisa" ShowCancelButton="False" />
+            <asp:CommandField ShowInsertButton="True" />
         </Fields>
     </asp:DetailsView>
 
-    <asp:SqlDataSource ID="SqlDataSourceLisa" runat="server"
+    <asp:SqlDataSource ID="SqlDataSource1_jarjekord" runat="server"
         ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
-        InsertCommand="INSERT INTO Puudumine (laps_id, alguse_kp, lopu_kp, pohjus) VALUES (@laps_id, @alguse_kp, @lopu_kp, @pohjus)">
+        SelectCommand="SELECT * FROM [Jarjekord]"
+        InsertCommand="INSERT INTO [Jarjekord] ([laps_id], [soovitud_ruhm_id], [staatus]) VALUES (@laps_id, @soovitud_ruhm_id, @staatus)"
+        UpdateCommand="UPDATE [Jarjekord] SET [laps_id] = @laps_id, [soovitud_ruhm_id] = @soovitud_ruhm_id, [staatus] = @staatus WHERE [jarjekord_id] = @jarjekord_id"
+        DeleteCommand="DELETE FROM [Jarjekord] WHERE [jarjekord_id] = @jarjekord_id">
         <InsertParameters>
-            <asp:ControlParameter Name="laps_id" ControlID="GridView1" PropertyName="SelectedValue" Type="Int32" />
-            <asp:Parameter Name="alguse_kp" Type="DateTime" />
-            <asp:Parameter Name="lopu_kp" Type="DateTime" />
-            <asp:Parameter Name="pohjus" Type="String" />
+            <asp:Parameter Name="laps_id" Type="Int32" />
+            <asp:Parameter Name="soovitud_ruhm_id" Type="Int32" />
+            <asp:Parameter Name="staatus" Type="String" />
         </InsertParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="laps_id" Type="Int32" />
+            <asp:Parameter Name="soovitud_ruhm_id" Type="Int32" />
+            <asp:Parameter Name="staatus" Type="String" />
+            <asp:Parameter Name="jarjekord_id" Type="Int32" />
+        </UpdateParameters>
+        <DeleteParameters>
+            <asp:Parameter Name="jarjekord_id" Type="Int32" />
+        </DeleteParameters>
     </asp:SqlDataSource>
-
 </asp:Content>

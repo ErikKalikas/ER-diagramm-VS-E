@@ -13,15 +13,21 @@ Option Explicit On
 
 Partial Public Class Contact3
 
-    Protected WithEvents GridView1 As Global.System.Web.UI.WebControls.GridView
-
-    Protected WithEvents SqlDataSourceLaps As Global.System.Web.UI.WebControls.SqlDataSource
-
-    Protected WithEvents GridView2 As Global.System.Web.UI.WebControls.GridView
-
-    Protected WithEvents SqlDataSourcePuudumine As Global.System.Web.UI.WebControls.SqlDataSource
-
+    '''<summary>
+    '''DetailsView1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
     Protected WithEvents DetailsView1 As Global.System.Web.UI.WebControls.DetailsView
 
-    Protected WithEvents SqlDataSourceLisa As Global.System.Web.UI.WebControls.SqlDataSource
+    '''<summary>
+    '''SqlDataSource1_jarjekord control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents SqlDataSource1_jarjekord As Global.System.Web.UI.WebControls.SqlDataSource
 End Class
