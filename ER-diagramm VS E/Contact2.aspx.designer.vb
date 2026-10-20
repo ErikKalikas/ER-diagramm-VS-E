@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class Contact
+Partial Public Class Contact2
 
     '''<summary>
     '''GridView1 control.
