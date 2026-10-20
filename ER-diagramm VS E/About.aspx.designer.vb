@@ -30,4 +30,13 @@ Partial Public Class About
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
+    '''<summary>
+    '''DetailsView1 control.
+    '''</summary>
+    Protected WithEvents DetailsView1 As Global.System.Web.UI.WebControls.DetailsView
+
+    '''<summary>
+    '''LabelTeade control.
+    '''</summary>
+    Protected WithEvents LabelTeade As Global.System.Web.UI.WebControls.Label
 End Class
