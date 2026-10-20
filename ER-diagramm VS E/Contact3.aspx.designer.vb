@@ -30,4 +30,19 @@ Partial Public Class Contact3
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents SqlDataSource1_jarjekord As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''LabelTeade control.
+    '''</summary>
+    Protected WithEvents LabelTeade As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''GridView1 control.
+    '''</summary>
+    Protected WithEvents GridView1 As Global.System.Web.UI.WebControls.GridView
+
+    '''<summary>
+    '''SqlDataSource1_jarjekord_tabel control.
+    '''</summary>
+    Protected WithEvents SqlDataSource1_jarjekord_tabel As Global.System.Web.UI.WebControls.SqlDataSource
 End Class
