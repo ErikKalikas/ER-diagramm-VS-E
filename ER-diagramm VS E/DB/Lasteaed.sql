@@ -1,12 +1,12 @@
 /* =========================================================
    Lasteaed – andmebaasi loomine (SQL Server / LocalDB)
-   1) tabelid koos piirangutega
-   2) testandmed
-   3) seoste ja piirangute kontroll
+   1) tabelid koos piirangutega (luuakse ainult need, mida veel pole)
+   1b) varem loodud andmebaasi parandused
+   2) testandmed (lisatakse ainult tühja andmebaasi)
+   3) seoste ja piirangute kontroll (testid tühistatakse ROLLBACK-iga)
 
-   !!! HOIATUS: see skript KUSTUTAB kõik tabelid ja loob need uuesti
-   !!! testandmetega. Kõik lehel lisatud/muudetud andmed kaovad.
-   !!! Olemasoleva andmebaasi parandamiseks käivita ainult paranda_*.sql faile.
+   Skripti võib käivitada mitu korda: see EI KUSTUTA andmeid.
+   Uus andmebaas luuakse koos testandmetega, olemasolev parandatakse.
    ========================================================= */
 
 SET ANSI_NULLS ON;
@@ -18,25 +18,11 @@ GO
 USE Lasteaed;
 GO
 
-/* Kustutame vanad tabelid (õiges järjekorras), et skripti saaks uuesti käivitada */
-IF OBJECT_ID('Menyy_roog')      IS NOT NULL DROP TABLE Menyy_roog;
-IF OBJECT_ID('Menyy')           IS NOT NULL DROP TABLE Menyy;
-IF OBJECT_ID('Toidu_valjastus') IS NOT NULL DROP TABLE Toidu_valjastus;
-IF OBJECT_ID('Roog')            IS NOT NULL DROP TABLE Roog;
-IF OBJECT_ID('Puudumine')       IS NOT NULL DROP TABLE Puudumine;
-IF OBJECT_ID('Jarjekord')       IS NOT NULL DROP TABLE Jarjekord;
-IF OBJECT_ID('Ruhmas_olek')     IS NOT NULL DROP TABLE Ruhmas_olek;
-IF OBJECT_ID('Laps')            IS NOT NULL DROP TABLE Laps;
-IF OBJECT_ID('Tootamine')       IS NOT NULL DROP TABLE Tootamine;
-IF OBJECT_ID('Ametikoht')       IS NOT NULL DROP TABLE Ametikoht;
-IF OBJECT_ID('Ruhm')            IS NOT NULL DROP TABLE Ruhm;
-IF OBJECT_ID('Ruhma_tyyp')      IS NOT NULL DROP TABLE Ruhma_tyyp;
-IF OBJECT_ID('Ametikoha_tyyp')  IS NOT NULL DROP TABLE Ametikoha_tyyp;
-IF OBJECT_ID('Tootaja')         IS NOT NULL DROP TABLE Tootaja;
-GO
+/* Tabeleid ei kustutata: olemasolevad andmed jäävad alles. */
 
 /* ===================== 1. TABELID ===================== */
 
+IF OBJECT_ID('Tootaja') IS NULL
 CREATE TABLE Tootaja (
     tootaja_id  INT IDENTITY(1,1) CONSTRAINT PK_Tootaja PRIMARY KEY,
     eesnimi     NVARCHAR(50)  NOT NULL,
@@ -48,9 +34,7 @@ CREATE TABLE Tootaja (
     CONSTRAINT CK_Tootaja_e_post    CHECK (e_post IS NULL OR e_post LIKE '%_@_%._%')
 );
 
-/* e_post on unikaalne, aga mitu töötajat võib olla ilma e-postita (NULL) */
-CREATE UNIQUE INDEX UQ_Tootaja_e_post ON Tootaja(e_post) WHERE e_post IS NOT NULL;
-
+IF OBJECT_ID('Ametikoha_tyyp') IS NULL
 CREATE TABLE Ametikoha_tyyp (
     ametikoha_tyyp_id INT IDENTITY(1,1) CONSTRAINT PK_Ametikoha_tyyp PRIMARY KEY,
     nimetus NVARCHAR(50) NOT NULL CONSTRAINT UQ_Ametikoha_tyyp_nimetus UNIQUE,
@@ -58,12 +42,14 @@ CREATE TABLE Ametikoha_tyyp (
         CHECK (nimetus IN (N'vanemkasvataja', N'metoodik', N'kasvataja', N'õpetaja abi', N'kokk', N'söögitädi'))
 );
 
+IF OBJECT_ID('Ruhma_tyyp') IS NULL
 CREATE TABLE Ruhma_tyyp (
     ruhma_tyyp_id INT IDENTITY(1,1) CONSTRAINT PK_Ruhma_tyyp PRIMARY KEY,
     nimetus NVARCHAR(30) NOT NULL CONSTRAINT UQ_Ruhma_tyyp_nimetus UNIQUE,
     CONSTRAINT CK_Ruhma_tyyp_nimetus CHECK (nimetus IN (N'sõim', N'aiarühm', N'liitrühm'))
 );
 
+IF OBJECT_ID('Ruhm') IS NULL
 CREATE TABLE Ruhm (
     ruhm_id       INT IDENTITY(1,1) CONSTRAINT PK_Ruhm PRIMARY KEY,
     ruhma_tyyp_id INT NOT NULL
@@ -73,6 +59,7 @@ CREATE TABLE Ruhm (
     CONSTRAINT CK_Ruhm_kohtade_arv CHECK (kohtade_arv BETWEEN 1 AND 30)
 );
 
+IF OBJECT_ID('Ametikoht') IS NULL
 CREATE TABLE Ametikoht (
     ametikoht_id      INT IDENTITY(1,1) CONSTRAINT PK_Ametikoht PRIMARY KEY,
     ruhm_id           INT NULL
@@ -85,6 +72,7 @@ CREATE TABLE Ametikoht (
         (on_kooki_koht = 0 AND ruhm_id IS NOT NULL))
 );
 
+IF OBJECT_ID('Tootamine') IS NULL
 CREATE TABLE Tootamine (
     tootamine_id INT IDENTITY(1,1) CONSTRAINT PK_Tootamine PRIMARY KEY,
     tootaja_id   INT NOT NULL CONSTRAINT FK_Tootamine_Tootaja   REFERENCES Tootaja(tootaja_id),
@@ -94,6 +82,7 @@ CREATE TABLE Tootamine (
     CONSTRAINT CK_Tootamine_kp CHECK (lopu_kp IS NULL OR lopu_kp >= alguse_kp)
 );
 
+IF OBJECT_ID('Laps') IS NULL
 CREATE TABLE Laps (
     laps_id   INT IDENTITY(1,1) CONSTRAINT PK_Laps PRIMARY KEY,
     eesnimi   NVARCHAR(50) NOT NULL,
@@ -102,6 +91,7 @@ CREATE TABLE Laps (
     CONSTRAINT CK_Laps_synniaeg  CHECK (synniaeg <= CAST(GETDATE() AS DATE))
 );
 
+IF OBJECT_ID('Ruhmas_olek') IS NULL
 CREATE TABLE Ruhmas_olek (
     ruhmas_olek_id INT IDENTITY(1,1) CONSTRAINT PK_Ruhmas_olek PRIMARY KEY,
     laps_id   INT NOT NULL CONSTRAINT FK_Ruhmas_olek_Laps REFERENCES Laps(laps_id),
@@ -111,6 +101,7 @@ CREATE TABLE Ruhmas_olek (
     CONSTRAINT CK_Ruhmas_olek_kp CHECK (lopu_kp IS NULL OR lopu_kp >= alguse_kp)
 );
 
+IF OBJECT_ID('Jarjekord') IS NULL
 CREATE TABLE Jarjekord (
     jarjekord_id     INT IDENTITY(1,1) CONSTRAINT PK_Jarjekord PRIMARY KEY,
     laps_id          INT NOT NULL CONSTRAINT FK_Jarjekord_Laps REFERENCES Laps(laps_id),
@@ -121,6 +112,7 @@ CREATE TABLE Jarjekord (
         CHECK (staatus IN (N'ootel', N'pakutud', N'vastu võetud', N'tühistatud'))
 );
 
+IF OBJECT_ID('Puudumine') IS NULL
 CREATE TABLE Puudumine (
     puudumine_id INT IDENTITY(1,1) CONSTRAINT PK_Puudumine PRIMARY KEY,
     laps_id   INT NOT NULL CONSTRAINT FK_Puudumine_Laps REFERENCES Laps(laps_id),
@@ -131,12 +123,14 @@ CREATE TABLE Puudumine (
     CONSTRAINT CK_Puudumine_pohjus CHECK (pohjus IN (N'haigus', N'puhkus', N'muu'))
 );
 
+IF OBJECT_ID('Roog') IS NULL
 CREATE TABLE Roog (
     roog_id   INT IDENTITY(1,1) CONSTRAINT PK_Roog PRIMARY KEY,
     nimetus   NVARCHAR(100) NOT NULL CONSTRAINT UQ_Roog_nimetus UNIQUE,
     kirjeldus NVARCHAR(255) NULL
 );
 
+IF OBJECT_ID('Toidu_valjastus') IS NULL
 CREATE TABLE Toidu_valjastus (
     valjastus_id    INT IDENTITY(1,1) CONSTRAINT PK_Toidu_valjastus PRIMARY KEY,
     ruhm_id         INT NOT NULL CONSTRAINT FK_Toidu_valjastus_Ruhm REFERENCES Ruhm(ruhm_id),
@@ -147,11 +141,13 @@ CREATE TABLE Toidu_valjastus (
     CONSTRAINT UQ_Toidu_valjastus UNIQUE (ruhm_id, roog_id, kuupaev)
 );
 
+IF OBJECT_ID('Menyy') IS NULL
 CREATE TABLE Menyy (
     menyy_id INT IDENTITY(1,1) CONSTRAINT PK_Menyy PRIMARY KEY,
     kuupaev  DATE NOT NULL CONSTRAINT UQ_Menyy_kuupaev UNIQUE
 );
 
+IF OBJECT_ID('Menyy_roog') IS NULL
 CREATE TABLE Menyy_roog (
     menyy_id  INT NOT NULL CONSTRAINT FK_Menyy_roog_Menyy REFERENCES Menyy(menyy_id),
     roog_id   INT NOT NULL CONSTRAINT FK_Menyy_roog_Roog  REFERENCES Roog(roog_id),
@@ -161,87 +157,108 @@ CREATE TABLE Menyy_roog (
 );
 GO
 
+/* ===================== 1b. PARANDUSED ===================== */
+/* Varem loodud andmebaasi parandused (andmed jäävad alles) */
+
+-- Tootaja.e_post: unikaalne, aga mitu töötajat võib olla ilma e-postita (NULL)
+IF OBJECT_ID('UQ_Tootaja_e_post', 'UQ') IS NOT NULL
+    ALTER TABLE Tootaja DROP CONSTRAINT UQ_Tootaja_e_post;
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UQ_Tootaja_e_post' AND object_id = OBJECT_ID('Tootaja'))
+    CREATE UNIQUE INDEX UQ_Tootaja_e_post ON Tootaja(e_post) WHERE e_post IS NOT NULL;
+
+-- Laps: isikukood eemaldatud, lapse kohta jääb sünniaeg
+IF OBJECT_ID('CK_Laps_isikukood', 'C') IS NOT NULL
+    ALTER TABLE Laps DROP CONSTRAINT CK_Laps_isikukood;
+IF OBJECT_ID('UQ_Laps_isikukood', 'UQ') IS NOT NULL
+    ALTER TABLE Laps DROP CONSTRAINT UQ_Laps_isikukood;
+IF COL_LENGTH('Laps', 'isikukood') IS NOT NULL
+    ALTER TABLE Laps DROP COLUMN isikukood;
+GO
+
 /* ===================== 2. ANDMED ===================== */
+/* Testandmed lisatakse ainult siis, kui andmebaas on tühi (värskelt loodud) */
+IF NOT EXISTS (SELECT 1 FROM Ruhma_tyyp)
+BEGIN
+    INSERT INTO Ruhma_tyyp (nimetus) VALUES (N'sõim'), (N'aiarühm'), (N'liitrühm');
 
-INSERT INTO Ruhma_tyyp (nimetus) VALUES (N'sõim'), (N'aiarühm'), (N'liitrühm');
+    INSERT INTO Ametikoha_tyyp (nimetus) VALUES
+     (N'vanemkasvataja'), (N'metoodik'), (N'kasvataja'), (N'õpetaja abi'), (N'kokk'), (N'söögitädi');
 
-INSERT INTO Ametikoha_tyyp (nimetus) VALUES
- (N'vanemkasvataja'), (N'metoodik'), (N'kasvataja'), (N'õpetaja abi'), (N'kokk'), (N'söögitädi');
+    INSERT INTO Ruhm (ruhma_tyyp_id, nimetus, kohtade_arv) VALUES
+     (1, N'Mõmmikud', 14),
+     (2, N'Päikesekiired', 20),
+     (2, N'Liblikad', 20),
+     (3, N'Siilid', 18);
 
-INSERT INTO Ruhm (ruhma_tyyp_id, nimetus, kohtade_arv) VALUES
- (1, N'Mõmmikud', 14),
- (2, N'Päikesekiired', 20),
- (2, N'Liblikad', 20),
- (3, N'Siilid', 18);
+    INSERT INTO Tootaja (eesnimi, perenimi, isikukood, telefon, e_post) VALUES
+     (N'Mari',  N'Tamm',   '47501010011', '5551234', 'mari.tamm@lasteaed.ee'),
+     (N'Kati',  N'Kask',   '48203150022', '5552345', 'kati.kask@lasteaed.ee'),
+     (N'Liis',  N'Saar',   '49007070033', '5553456', 'liis.saar@lasteaed.ee'),
+     (N'Anne',  N'Mägi',   '46811110044', '5554567', 'anne.magi@lasteaed.ee'),
+     (N'Peeter',N'Kuusk',  '37905050055', '5555678', 'peeter.kuusk@lasteaed.ee'),
+     (N'Tiina', N'Lepp',   '47409090066', NULL,      NULL);
 
-INSERT INTO Tootaja (eesnimi, perenimi, isikukood, telefon, e_post) VALUES
- (N'Mari',  N'Tamm',   '47501010011', '5551234', 'mari.tamm@lasteaed.ee'),
- (N'Kati',  N'Kask',   '48203150022', '5552345', 'kati.kask@lasteaed.ee'),
- (N'Liis',  N'Saar',   '49007070033', '5553456', 'liis.saar@lasteaed.ee'),
- (N'Anne',  N'Mägi',   '46811110044', '5554567', 'anne.magi@lasteaed.ee'),
- (N'Peeter',N'Kuusk',  '37905050055', '5555678', 'peeter.kuusk@lasteaed.ee'),
- (N'Tiina', N'Lepp',   '47409090066', NULL,      NULL);
+    INSERT INTO Ametikoht (ruhm_id, ametikoha_tyyp_id, on_kooki_koht) VALUES
+     (1,    3, 0),  -- 1: Mõmmikute kasvataja
+     (2,    3, 0),  -- 2: Päikesekiirte kasvataja
+     (3,    1, 0),  -- 3: Liblikate vanemkasvataja
+     (4,    4, 0),  -- 4: Siilide õpetaja abi
+     (NULL, 5, 1),  -- 5: köök – kokk
+     (NULL, 6, 1);  -- 6: köök – söögitädi
 
-INSERT INTO Ametikoht (ruhm_id, ametikoha_tyyp_id, on_kooki_koht) VALUES
- (1,    3, 0),  -- 1: Mõmmikute kasvataja
- (2,    3, 0),  -- 2: Päikesekiirte kasvataja
- (3,    1, 0),  -- 3: Liblikate vanemkasvataja
- (4,    4, 0),  -- 4: Siilide õpetaja abi
- (NULL, 5, 1),  -- 5: köök – kokk
- (NULL, 6, 1);  -- 6: köök – söögitädi
+    INSERT INTO Tootamine (tootaja_id, ametikoht_id, alguse_kp, lopu_kp) VALUES
+     (1, 1, '2020-09-01', NULL),
+     (2, 2, '2021-08-15', NULL),
+     (3, 3, '2019-09-01', NULL),
+     (4, 4, '2022-01-10', '2025-06-30'),
+     (5, 5, '2018-03-01', NULL),
+     (6, 6, '2023-09-01', NULL);
 
-INSERT INTO Tootamine (tootaja_id, ametikoht_id, alguse_kp, lopu_kp) VALUES
- (1, 1, '2020-09-01', NULL),
- (2, 2, '2021-08-15', NULL),
- (3, 3, '2019-09-01', NULL),
- (4, 4, '2022-01-10', '2025-06-30'),
- (5, 5, '2018-03-01', NULL),
- (6, 6, '2023-09-01', NULL);
+    INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES
+     (N'Mia',    N'Tamm',   '2024-03-12'),
+     (N'Oliver', N'Kask',   '2023-07-05'),
+     (N'Sofia',  N'Saar',   '2021-01-19'),
+     (N'Robin',  N'Ilves',  '2020-10-30'),
+     (N'Emma',   N'Rebane', '2022-05-25'),
+     (N'Lukas',  N'Põder',  '2021-12-12'),
+     (N'Hanna',  N'Karu',   '2025-02-14');
 
-INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES
- (N'Mia',    N'Tamm',   '2024-03-12'),
- (N'Oliver', N'Kask',   '2023-07-05'),
- (N'Sofia',  N'Saar',   '2021-01-19'),
- (N'Robin',  N'Ilves',  '2020-10-30'),
- (N'Emma',   N'Rebane', '2022-05-25'),
- (N'Lukas',  N'Põder',  '2021-12-12'),
- (N'Hanna',  N'Karu',   '2025-02-14');
+    INSERT INTO Ruhmas_olek (laps_id, ruhm_id, alguse_kp, lopu_kp) VALUES
+     (1, 1, '2025-09-01', NULL),
+     (2, 1, '2025-09-01', '2026-08-31'),
+     (2, 2, '2026-09-01', NULL),
+     (3, 3, '2024-09-01', NULL),
+     (4, 4, '2023-09-01', NULL),
+     (5, 2, '2025-09-01', NULL),
+     (6, 3, '2024-09-01', NULL);
 
-INSERT INTO Ruhmas_olek (laps_id, ruhm_id, alguse_kp, lopu_kp) VALUES
- (1, 1, '2025-09-01', NULL),
- (2, 1, '2025-09-01', '2026-08-31'),
- (2, 2, '2026-09-01', NULL),
- (3, 3, '2024-09-01', NULL),
- (4, 4, '2023-09-01', NULL),
- (5, 2, '2025-09-01', NULL),
- (6, 3, '2024-09-01', NULL);
+    INSERT INTO Jarjekord (laps_id, soovitud_ruhm_id, lisamise_kp, staatus) VALUES
+     (7, 1,    '2026-03-01', N'ootel'),
+     (1, 1,    '2025-02-10', N'vastu võetud'),
+     (5, NULL, '2025-01-05', N'vastu võetud');
 
-INSERT INTO Jarjekord (laps_id, soovitud_ruhm_id, lisamise_kp, staatus) VALUES
- (7, 1,    '2026-03-01', N'ootel'),
- (1, 1,    '2025-02-10', N'vastu võetud'),
- (5, NULL, '2025-01-05', N'vastu võetud');
+    INSERT INTO Puudumine (laps_id, alguse_kp, lopu_kp, pohjus) VALUES
+     (1, '2026-10-05', '2026-10-09', N'haigus'),
+     (3, '2026-07-01', '2026-07-31', N'puhkus'),
+     (4, '2026-10-12', '2026-10-12', N'muu');
 
-INSERT INTO Puudumine (laps_id, alguse_kp, lopu_kp, pohjus) VALUES
- (1, '2026-10-05', '2026-10-09', N'haigus'),
- (3, '2026-07-01', '2026-07-31', N'puhkus'),
- (4, '2026-10-12', '2026-10-12', N'muu');
+    INSERT INTO Roog (nimetus, kirjeldus) VALUES
+     (N'Kaerahelbepuder', N'Piimaga, moosiga'),
+     (N'Kanasupp',        N'Köögiviljade ja nuudlitega'),
+     (N'Kartulipuder hakklihakastmega', NULL),
+     (N'Kohupiimavorm',   N'Marjakastmega'),
+     (N'Õunakook',        NULL);
 
-INSERT INTO Roog (nimetus, kirjeldus) VALUES
- (N'Kaerahelbepuder', N'Piimaga, moosiga'),
- (N'Kanasupp',        N'Köögiviljade ja nuudlitega'),
- (N'Kartulipuder hakklihakastmega', NULL),
- (N'Kohupiimavorm',   N'Marjakastmega'),
- (N'Õunakook',        NULL);
+    INSERT INTO Menyy (kuupaev) VALUES ('2026-10-12'), ('2026-10-13');
 
-INSERT INTO Menyy (kuupaev) VALUES ('2026-10-12'), ('2026-10-13');
+    INSERT INTO Menyy_roog (menyy_id, roog_id, toidukord) VALUES
+     (1, 1, N'hommikusöök'), (1, 2, N'lõuna'), (1, 5, N'oode'),
+     (2, 1, N'hommikusöök'), (2, 3, N'lõuna'), (2, 4, N'oode');
 
-INSERT INTO Menyy_roog (menyy_id, roog_id, toidukord) VALUES
- (1, 1, N'hommikusöök'), (1, 2, N'lõuna'), (1, 5, N'oode'),
- (2, 1, N'hommikusöök'), (2, 3, N'lõuna'), (2, 4, N'oode');
-
-INSERT INTO Toidu_valjastus (ruhm_id, roog_id, kuupaev, portsjonite_arv) VALUES
- (1, 1, '2026-10-12', 12), (2, 1, '2026-10-12', 19), (3, 2, '2026-10-12', 18),
- (4, 2, '2026-10-12', 16), (1, 3, '2026-10-13', 11), (2, 3, '2026-10-13', 20);
+    INSERT INTO Toidu_valjastus (ruhm_id, roog_id, kuupaev, portsjonite_arv) VALUES
+     (1, 1, '2026-10-12', 12), (2, 1, '2026-10-12', 19), (3, 2, '2026-10-12', 18),
+     (4, 2, '2026-10-12', 16), (1, 3, '2026-10-13', 11), (2, 3, '2026-10-13', 20);
+END
 GO
 
 /* ===================== 3. KONTROLL ===================== */
@@ -274,8 +291,10 @@ SELECT r.nimetus AS ruhm, SUM(tv.portsjonite_arv) AS portsjoneid
 FROM Toidu_valjastus tv JOIN Ruhm r ON r.ruhm_id = tv.ruhm_id
 GROUP BY r.nimetus;
 
--- 3.5 Piirangute test: iga lause PEAB ebaõnnestuma
+-- 3.5 Piirangute test: iga lause PEAB ebaõnnestuma.
+--     Kõik testid on tehingus, mis lõpus tühistatakse (ROLLBACK), et andmed ei muutuks.
 DECLARE @tests TABLE (nr INT IDENTITY, kirjeldus NVARCHAR(200), tulemus NVARCHAR(300));
+BEGIN TRAN;
 
 BEGIN TRY INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES (NULL, N'Test', '2022-01-01');
       INSERT INTO @tests VALUES (N'NOT NULL – Laps.eesnimi', N'VIGA: lubati!'); END TRY
@@ -317,6 +336,7 @@ BEGIN TRY INSERT INTO Menyy_roog (menyy_id, roog_id, toidukord) VALUES (1, 1, N'
       INSERT INTO @tests VALUES (N'PRIMARY KEY – Menyy_roog topeltrida', N'VIGA: lubati!'); END TRY
 BEGIN CATCH INSERT INTO @tests VALUES (N'PRIMARY KEY – Menyy_roog topeltrida', N'OK: ' + ERROR_MESSAGE()); END CATCH;
 
+ROLLBACK TRAN;
 SELECT * FROM @tests;
 
 -- 3.6 Ridade arv igas tabelis
