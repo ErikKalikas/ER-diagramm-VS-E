@@ -19,6 +19,21 @@
         End If
     End Sub
 
+    ' Pärast lapse lisamist: värskendame tabelit ja järjekorra vormi ripploendit
+    Protected Sub DetailsView2_ItemInserted(sender As Object, e As DetailsViewInsertedEventArgs)
+        If e.Exception IsNot Nothing Then
+            LabelTeade.Text = "Viga lapse lisamisel: " & e.Exception.Message
+            LabelTeade.ForeColor = System.Drawing.Color.Red
+            e.ExceptionHandled = True
+            e.KeepInInsertMode = True
+        Else
+            LabelTeade.Text = "Laps lisatud!"
+            LabelTeade.ForeColor = System.Drawing.Color.Green
+            GridView1.DataBind()
+            DetailsView1.DataBind()
+        End If
+    End Sub
+
     Protected Sub GridView1_RowUpdated(sender As Object, e As GridViewUpdatedEventArgs)
         If e.Exception IsNot Nothing Then
             LabelTeade.Text = "Viga muutmisel: " & e.Exception.Message
