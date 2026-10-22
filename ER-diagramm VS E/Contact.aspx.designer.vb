@@ -22,4 +22,9 @@ Partial Public Class Contact
     '''SqlDataSource1 control.
     '''</summary>
     Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''LabelTeade control.
+    '''</summary>
+    Protected WithEvents LabelTeade As Global.System.Web.UI.WebControls.Label
 End Class
