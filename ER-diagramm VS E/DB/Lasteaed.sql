@@ -5,6 +5,9 @@
    3) seoste ja piirangute kontroll
    ========================================================= */
 
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;  -- vajalik filtreeritud indeksi jaoks
+GO
 IF DB_ID(N'Lasteaed') IS NULL
     CREATE DATABASE Lasteaed;
 GO
@@ -36,10 +39,13 @@ CREATE TABLE Tootaja (
     perenimi    NVARCHAR(50)  NOT NULL,
     isikukood   CHAR(11)      NOT NULL CONSTRAINT UQ_Tootaja_isikukood UNIQUE,
     telefon     VARCHAR(20)   NULL,
-    e_post      VARCHAR(100)  NULL CONSTRAINT UQ_Tootaja_e_post UNIQUE,
+    e_post      VARCHAR(100)  NULL,
     CONSTRAINT CK_Tootaja_isikukood CHECK (LEN(isikukood) = 11 AND isikukood NOT LIKE '%[^0-9]%'),
     CONSTRAINT CK_Tootaja_e_post    CHECK (e_post IS NULL OR e_post LIKE '%_@_%._%')
 );
+
+/* e_post on unikaalne, aga mitu töötajat võib olla ilma e-postita (NULL) */
+CREATE UNIQUE INDEX UQ_Tootaja_e_post ON Tootaja(e_post) WHERE e_post IS NOT NULL;
 
 CREATE TABLE Ametikoha_tyyp (
     ametikoha_tyyp_id INT IDENTITY(1,1) CONSTRAINT PK_Ametikoha_tyyp PRIMARY KEY,

@@ -30,7 +30,12 @@
 
     Protected Sub GridView1_RowDeleted(sender As Object, e As GridViewDeletedEventArgs)
         If e.Exception IsNot Nothing Then
-            LabelTeade.Text = "Viga kustutamisel: " & e.Exception.Message
+            If e.Exception.Message.Contains("REFERENCE constraint") Then
+                ' Töötajal on kirjeid tabelis Tootamine (võõrvõti ei luba kustutada)
+                LabelTeade.Text = "Seda töötajat ei saa kustutada: tal on seotud kirjeid tabelis Tootamine."
+            Else
+                LabelTeade.Text = "Viga kustutamisel: " & e.Exception.Message
+            End If
             LabelTeade.ForeColor = System.Drawing.Color.Red
             e.ExceptionHandled = True
         End If
