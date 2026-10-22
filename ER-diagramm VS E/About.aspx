@@ -24,7 +24,17 @@
         DataSourceID="SqlDataSource1" EmptyDataText="Andmed puuduvad." CssClass="table"
         OnRowUpdated="GridView1_RowUpdated" OnRowDeleted="GridView1_RowDeleted">
         <Columns>
-            <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" EditText="Muuda" DeleteText="Kustuta" UpdateText="Salvesta" CancelText="Tühista" />
+            <asp:TemplateField ShowHeader="False">
+                <ItemTemplate>
+                    <asp:LinkButton ID="LinkButtonEdit" runat="server" CausesValidation="False" CommandName="Edit" Text="Muuda"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Kustuta"
+                        OnClientClick="return confirm('Kustutada see töötaja koos tema ametikohtade ajalooga?');"></asp:LinkButton>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:LinkButton ID="LinkButtonUpdate" runat="server" CausesValidation="True" CommandName="Update" Text="Salvesta"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonCancel" runat="server" CausesValidation="False" CommandName="Cancel" Text="Tühista"></asp:LinkButton>
+                </EditItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField DataField="tootaja_id" HeaderText="ID" ReadOnly="True" SortExpression="tootaja_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
@@ -40,7 +50,12 @@
         SelectCommand="SELECT [tootaja_id], [eesnimi], [perenimi], [isikukood], [telefon], [e_post] FROM [Tootaja]"
         InsertCommand="INSERT INTO [Tootaja] ([eesnimi], [perenimi], [isikukood], [telefon], [e_post]) VALUES (@eesnimi, @perenimi, @isikukood, @telefon, @e_post)"
         UpdateCommand="UPDATE [Tootaja] SET [eesnimi] = @eesnimi, [perenimi] = @perenimi, [isikukood] = @isikukood, [telefon] = @telefon, [e_post] = @e_post WHERE [tootaja_id] = @tootaja_id"
-        DeleteCommand="DELETE FROM [Tootaja] WHERE [tootaja_id] = @tootaja_id">
+        DeleteCommand="SET XACT_ABORT ON;
+            BEGIN TRY BEGIN TRAN;
+            DELETE FROM [Tootamine] WHERE [tootaja_id] = @tootaja_id;
+            DELETE FROM [Tootaja] WHERE [tootaja_id] = @tootaja_id;
+            COMMIT TRAN; END TRY
+            BEGIN CATCH IF @@TRANCOUNT != 0 ROLLBACK TRAN; THROW; END CATCH;">
         <DeleteParameters>
             <asp:Parameter Name="tootaja_id" Type="Int32" />
         </DeleteParameters>

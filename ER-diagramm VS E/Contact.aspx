@@ -8,9 +8,19 @@
     <div class="table-responsive">
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="tootaja_id,tootamine_id"
         DataSourceID="SqlDataSource1" EmptyDataText="Andmed puuduvad." CssClass="table"
-        OnRowUpdated="GridView1_RowUpdated">
+        OnRowUpdated="GridView1_RowUpdated" OnRowDeleted="GridView1_RowDeleted">
         <Columns>
-            <asp:CommandField ShowEditButton="True" EditText="Muuda" UpdateText="Salvesta" CancelText="Tühista" />
+            <asp:TemplateField ShowHeader="False">
+                <ItemTemplate>
+                    <asp:LinkButton ID="LinkButtonEdit" runat="server" CausesValidation="False" CommandName="Edit" Text="Muuda"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Kustuta"
+                        OnClientClick="return confirm('Kustutada see töötaja koos tema ametikohtade ajalooga?');"></asp:LinkButton>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:LinkButton ID="LinkButtonUpdate" runat="server" CausesValidation="True" CommandName="Update" Text="Salvesta"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonCancel" runat="server" CausesValidation="False" CommandName="Cancel" Text="Tühista"></asp:LinkButton>
+                </EditItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField DataField="tootaja_id" HeaderText="ID" SortExpression="tootaja_id" ReadOnly="True" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" ControlStyle-Width="110px" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" ControlStyle-Width="110px" />
@@ -85,6 +95,12 @@
     <asp:SqlDataSource ID="SqlDataSource1" runat="server"
         ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
         SelectCommand="SELECT Tootaja.tootaja_id, Tootamine.tootamine_id, Tootaja.eesnimi, Tootaja.perenimi, Tootaja.isikukood, Tootaja.telefon, Tootaja.e_post, Ametikoht.ametikoha_tyyp_id, ISNULL(Ametikoha_tyyp.nimetus, N'—') AS amet_tekst, CASE WHEN Ametikoht.on_kooki_koht = 1 THEN 0 ELSE Ametikoht.ruhm_id END AS ruhm_valik, CASE WHEN Ametikoht.on_kooki_koht = 1 THEN N'köök' ELSE ISNULL(Ruhm.nimetus, N'—') END AS ruhm_tekst, Tootamine.alguse_kp, ISNULL(CONVERT(nvarchar(10), Tootamine.alguse_kp, 104), N'—') AS algus_tekst, Tootamine.lopu_kp, CASE WHEN Tootamine.lopu_kp IS NULL THEN 'tootab' ELSE 'kuupaev' END AS lopu_valik, CASE WHEN Tootamine.tootamine_id IS NULL THEN N'—' WHEN Tootamine.lopu_kp IS NULL THEN N'töötab' ELSE CONVERT(nvarchar(10), Tootamine.lopu_kp, 104) END AS lopp FROM Tootaja LEFT JOIN Tootamine ON Tootamine.tootaja_id = Tootaja.tootaja_id LEFT JOIN Ametikoht ON Tootamine.ametikoht_id = Ametikoht.ametikoht_id LEFT JOIN Ametikoha_tyyp ON Ametikoht.ametikoha_tyyp_id = Ametikoha_tyyp.ametikoha_tyyp_id LEFT JOIN Ruhm ON Ametikoht.ruhm_id = Ruhm.ruhm_id ORDER BY Tootaja.perenimi, Tootaja.eesnimi"
+        DeleteCommand="SET XACT_ABORT ON;
+            BEGIN TRY BEGIN TRAN;
+            DELETE FROM [Tootamine] WHERE [tootaja_id] = @tootaja_id;
+            DELETE FROM [Tootaja] WHERE [tootaja_id] = @tootaja_id;
+            COMMIT TRAN; END TRY
+            BEGIN CATCH IF @@TRANCOUNT != 0 ROLLBACK TRAN; THROW; END CATCH;"
         UpdateCommand="SET XACT_ABORT ON;
             DECLARE @ruhm int = NULLIF(@ruhm_valik, 0), @ametikoht int = NULL, @lopp date = NULL;
             BEGIN TRY BEGIN TRAN;
@@ -109,6 +125,10 @@
                 INSERT INTO [Tootamine] ([tootaja_id], [ametikoht_id], [alguse_kp], [lopu_kp]) VALUES (@tootaja_id, @ametikoht, ISNULL(@alguse_kp, CAST(GETDATE() AS date)), @lopp);
             COMMIT TRAN; END TRY
             BEGIN CATCH IF @@TRANCOUNT != 0 ROLLBACK TRAN; THROW; END CATCH;">
+        <DeleteParameters>
+            <asp:Parameter Name="tootaja_id" Type="Int32" />
+            <asp:Parameter Name="tootamine_id" />
+        </DeleteParameters>
         <UpdateParameters>
             <asp:Parameter Name="eesnimi" Type="String" />
             <asp:Parameter Name="perenimi" Type="String" />
