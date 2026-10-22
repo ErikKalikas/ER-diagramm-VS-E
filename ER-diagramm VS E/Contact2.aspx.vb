@@ -7,15 +7,15 @@ Public Class Contact2
 
     End Sub
 
-    ' Pärast lapse lisamist: näitame teadet, värskendame tabelit ja rühmade ripploendit (laste arv)
+    ' Pärast lisamist: näitame teadet, värskendame tabelit ja vormi ripploendeid (lapsed, laste arv rühmas)
     Protected Sub DetailsView1_ItemInserted(sender As Object, e As DetailsViewInsertedEventArgs)
         If e.Exception IsNot Nothing Then
-            LabelTeade.Text = "Viga lapse lisamisel: " & e.Exception.Message
+            LabelTeade.Text = "Viga lisamisel: " & e.Exception.Message
             LabelTeade.ForeColor = System.Drawing.Color.Red
             e.ExceptionHandled = True
             e.KeepInInsertMode = True
         Else
-            LabelTeade.Text = "Laps lisatud!"
+            LabelTeade.Text = "Salvestatud!"
             LabelTeade.ForeColor = System.Drawing.Color.Green
             GridView1.DataBind()
             DetailsView1.DataBind()
