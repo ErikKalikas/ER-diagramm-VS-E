@@ -24,16 +24,6 @@ Partial Public Class Contact2
     Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
-    '''DetailsView1 control.
-    '''</summary>
-    Protected WithEvents DetailsView1 As Global.System.Web.UI.WebControls.DetailsView
-
-    '''<summary>
-    '''SqlDataSource1_laps_lisa control.
-    '''</summary>
-    Protected WithEvents SqlDataSource1_laps_lisa As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
     '''LabelTeade control.
     '''</summary>
     Protected WithEvents LabelTeade As Global.System.Web.UI.WebControls.Label

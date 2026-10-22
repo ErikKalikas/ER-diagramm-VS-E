@@ -5,7 +5,7 @@
 
     End Sub
 
-    ' Pärast lisamist: näitame teadet ja värskendame tabelit
+    ' Pärast lisamist: näitame teadet, värskendame tabelit ja vormi ripploendeid (lapsed, laste arv rühmas)
     Protected Sub DetailsView1_ItemInserted(sender As Object, e As DetailsViewInsertedEventArgs)
         If e.Exception IsNot Nothing Then
             LabelTeade.Text = "Viga lisamisel: " & e.Exception.Message
@@ -13,9 +13,10 @@
             e.ExceptionHandled = True
             e.KeepInInsertMode = True
         Else
-            LabelTeade.Text = "Lisatud!"
+            LabelTeade.Text = "Salvestatud!"
             LabelTeade.ForeColor = System.Drawing.Color.Green
             GridView1.DataBind()
+            DetailsView1.DataBind()
         End If
     End Sub
 

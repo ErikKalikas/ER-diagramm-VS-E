@@ -23,13 +23,13 @@ Partial Public Class Contact3
     Protected WithEvents DetailsView1 As Global.System.Web.UI.WebControls.DetailsView
 
     '''<summary>
-    '''SqlDataSource1_jarjekord control.
+    '''SqlDataSource1_laps_lisa control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents SqlDataSource1_jarjekord As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents SqlDataSource1_laps_lisa As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''LabelTeade control.
