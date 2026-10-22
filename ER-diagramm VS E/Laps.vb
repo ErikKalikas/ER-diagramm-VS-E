@@ -20,8 +20,6 @@ Partial Public Class Laps
 
     Public Property perenimi As String
 
-    Public Property isikukood As String
-
     Public Property synniaeg As Date
 
 

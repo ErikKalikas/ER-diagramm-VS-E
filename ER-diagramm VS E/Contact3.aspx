@@ -77,7 +77,6 @@
             <asp:BoundField DataField="laps_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="laps_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
-            <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />
             <asp:TemplateField HeaderText="Sünniaeg" SortExpression="synniaeg">
                 <InsertItemTemplate>
                     <asp:TextBox ID="TextBoxSynniaeg" runat="server" TextMode="Date" Text='<%# Bind("synniaeg") %>'></asp:TextBox>
@@ -89,12 +88,11 @@
 
     <asp:SqlDataSource ID="SqlDataSource1_laps_lisa" runat="server"
         ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
-        SelectCommand="SELECT [laps_id], [eesnimi], [perenimi], [isikukood], [synniaeg] FROM [Laps]"
-        InsertCommand="INSERT INTO [Laps] ([eesnimi], [perenimi], [isikukood], [synniaeg]) VALUES (@eesnimi, @perenimi, @isikukood, @synniaeg)">
+        SelectCommand="SELECT [laps_id], [eesnimi], [perenimi], [synniaeg] FROM [Laps]"
+        InsertCommand="INSERT INTO [Laps] ([eesnimi], [perenimi], [synniaeg]) VALUES (@eesnimi, @perenimi, @synniaeg)">
         <InsertParameters>
             <asp:Parameter Name="eesnimi" Type="String" />
             <asp:Parameter Name="perenimi" Type="String" />
-            <asp:Parameter Name="isikukood" Type="String" />
             <asp:Parameter Name="synniaeg" Type="DateTime" />
         </InsertParameters>
     </asp:SqlDataSource>
@@ -113,7 +111,7 @@
                     <%-- Edit/Delete ainult neil lastel, kes on järjekorras --%>
                     <asp:LinkButton ID="LinkButtonEdit" runat="server" CausesValidation="False" CommandName="Edit" Text="Muuda"
                         Visible='<%# Not IsDBNull(Eval("jarjekord_id")) %>'></asp:LinkButton>
-                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Kustuta"
+                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Eemalda järjekorrast"
                         Visible='<%# Not IsDBNull(Eval("jarjekord_id")) %>'></asp:LinkButton>
                 </ItemTemplate>
                 <EditItemTemplate>

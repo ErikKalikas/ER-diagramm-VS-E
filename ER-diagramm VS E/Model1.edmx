@@ -38,7 +38,6 @@
           <Property Name="laps_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="eesnimi" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="perenimi" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="isikukood" Type="char" MaxLength="11" Nullable="false" />
           <Property Name="synniaeg" Type="date" Nullable="false" />
         </EntityType>
         <EntityType Name="Menyy">
@@ -487,7 +486,6 @@
           <Property Name="laps_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="eesnimi" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="perenimi" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="isikukood" Type="String" Nullable="false" MaxLength="11" FixedLength="true" Unicode="false" />
           <Property Name="synniaeg" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="Jarjekord" Relationship="Model1.FK_Jarjekord_Laps" FromRole="Laps" ToRole="Jarjekord" />
           <NavigationProperty Name="Puudumine" Relationship="Model1.FK_Puudumine_Laps" FromRole="Laps" ToRole="Puudumine" />
@@ -810,7 +808,6 @@
             <EntityTypeMapping TypeName="Model1.Laps">
               <MappingFragment StoreEntitySet="Laps">
                 <ScalarProperty Name="synniaeg" ColumnName="synniaeg" />
-                <ScalarProperty Name="isikukood" ColumnName="isikukood" />
                 <ScalarProperty Name="perenimi" ColumnName="perenimi" />
                 <ScalarProperty Name="eesnimi" ColumnName="eesnimi" />
                 <ScalarProperty Name="laps_id" ColumnName="laps_id" />

@@ -94,9 +94,7 @@ CREATE TABLE Laps (
     laps_id   INT IDENTITY(1,1) CONSTRAINT PK_Laps PRIMARY KEY,
     eesnimi   NVARCHAR(50) NOT NULL,
     perenimi  NVARCHAR(50) NOT NULL,
-    isikukood CHAR(11)     NOT NULL CONSTRAINT UQ_Laps_isikukood UNIQUE,
     synniaeg  DATE         NOT NULL,
-    CONSTRAINT CK_Laps_isikukood CHECK (LEN(isikukood) = 11 AND isikukood NOT LIKE '%[^0-9]%'),
     CONSTRAINT CK_Laps_synniaeg  CHECK (synniaeg <= CAST(GETDATE() AS DATE))
 );
 
@@ -196,14 +194,14 @@ INSERT INTO Tootamine (tootaja_id, ametikoht_id, alguse_kp, lopu_kp) VALUES
  (5, 5, '2018-03-01', NULL),
  (6, 6, '2023-09-01', NULL);
 
-INSERT INTO Laps (eesnimi, perenimi, isikukood, synniaeg) VALUES
- (N'Mia',    N'Tamm',   '62403120011', '2024-03-12'),
- (N'Oliver', N'Kask',   '52307050022', '2023-07-05'),
- (N'Sofia',  N'Saar',   '62101190033', '2021-01-19'),
- (N'Robin',  N'Ilves',  '52010300044', '2020-10-30'),
- (N'Emma',   N'Rebane', '62205250055', '2022-05-25'),
- (N'Lukas',  N'Põder',  '52112120066', '2021-12-12'),
- (N'Hanna',  N'Karu',   '62502140077', '2025-02-14');
+INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES
+ (N'Mia',    N'Tamm',   '2024-03-12'),
+ (N'Oliver', N'Kask',   '2023-07-05'),
+ (N'Sofia',  N'Saar',   '2021-01-19'),
+ (N'Robin',  N'Ilves',  '2020-10-30'),
+ (N'Emma',   N'Rebane', '2022-05-25'),
+ (N'Lukas',  N'Põder',  '2021-12-12'),
+ (N'Hanna',  N'Karu',   '2025-02-14');
 
 INSERT INTO Ruhmas_olek (laps_id, ruhm_id, alguse_kp, lopu_kp) VALUES
  (1, 1, '2025-09-01', NULL),
@@ -275,13 +273,13 @@ GROUP BY r.nimetus;
 -- 3.5 Piirangute test: iga lause PEAB ebaõnnestuma
 DECLARE @tests TABLE (nr INT IDENTITY, kirjeldus NVARCHAR(200), tulemus NVARCHAR(300));
 
-BEGIN TRY INSERT INTO Laps (eesnimi, perenimi, isikukood, synniaeg) VALUES (NULL, N'Test', '61111111111', '2022-01-01');
+BEGIN TRY INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES (NULL, N'Test', '2022-01-01');
       INSERT INTO @tests VALUES (N'NOT NULL – Laps.eesnimi', N'VIGA: lubati!'); END TRY
 BEGIN CATCH INSERT INTO @tests VALUES (N'NOT NULL – Laps.eesnimi', N'OK: ' + ERROR_MESSAGE()); END CATCH;
 
-BEGIN TRY INSERT INTO Laps (eesnimi, perenimi, isikukood, synniaeg) VALUES (N'Topelt', N'Test', '62403120011', '2022-01-01');
-      INSERT INTO @tests VALUES (N'UNIQUE – Laps.isikukood', N'VIGA: lubati!'); END TRY
-BEGIN CATCH INSERT INTO @tests VALUES (N'UNIQUE – Laps.isikukood', N'OK: ' + ERROR_MESSAGE()); END CATCH;
+BEGIN TRY INSERT INTO Laps (eesnimi, perenimi, synniaeg) VALUES (N'Tuleviku', N'Test', DATEADD(year, 1, GETDATE()));
+      INSERT INTO @tests VALUES (N'CHECK – Laps.synniaeg ei tohi olla tulevikus', N'VIGA: lubati!'); END TRY
+BEGIN CATCH INSERT INTO @tests VALUES (N'CHECK – Laps.synniaeg ei tohi olla tulevikus', N'OK: ' + ERROR_MESSAGE()); END CATCH;
 
 BEGIN TRY INSERT INTO Puudumine (laps_id, alguse_kp, lopu_kp, pohjus) VALUES (1, '2026-10-01', '2026-10-02', N'igav');
       INSERT INTO @tests VALUES (N'CHECK – Puudumine.pohjus', N'VIGA: lubati!'); END TRY

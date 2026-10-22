@@ -21,4 +21,17 @@ Public Class Contact2
             DetailsView1.DataBind()
         End If
     End Sub
+
+    ' Lapse kustutamine (koos tema rühmade, järjekorra ja puudumistega); värskendame ka rühma vormi ripploendeid
+    Protected Sub GridView1_RowDeleted(sender As Object, e As GridViewDeletedEventArgs)
+        If e.Exception IsNot Nothing Then
+            LabelTeade.Text = "Viga kustutamisel: " & e.Exception.Message
+            LabelTeade.ForeColor = System.Drawing.Color.Red
+            e.ExceptionHandled = True
+        Else
+            LabelTeade.Text = "Laps kustutatud."
+            LabelTeade.ForeColor = System.Drawing.Color.Green
+            DetailsView1.DataBind()
+        End If
+    End Sub
 End Class
