@@ -3,6 +3,10 @@
    1) tabelid koos piirangutega
    2) testandmed
    3) seoste ja piirangute kontroll
+
+   !!! HOIATUS: see skript KUSTUTAB kõik tabelid ja loob need uuesti
+   !!! testandmetega. Kõik lehel lisatud/muudetud andmed kaovad.
+   !!! Olemasoleva andmebaasi parandamiseks käivita ainult paranda_*.sql faile.
    ========================================================= */
 
 SET ANSI_NULLS ON;
