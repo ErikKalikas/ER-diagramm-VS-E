@@ -6,7 +6,7 @@
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"
         DataSourceID="SqlDataSource1" EmptyDataText="Andmed puuduvad." CssClass="table">
         <Columns>
-            <asp:BoundField DataField="laps_id" HeaderText="laps_id" SortExpression="laps_id" />
+            <asp:BoundField DataField="laps_id" HeaderText="ID" SortExpression="laps_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
             <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />

@@ -7,13 +7,13 @@
         DataSourceID="SqlDataSource1" DefaultMode="Insert" Height="50px" Width="400px"
         OnItemInserted="DetailsView1_ItemInserted">
         <Fields>
-            <asp:BoundField DataField="tootaja_id" HeaderText="tootaja_id" InsertVisible="False" ReadOnly="True" SortExpression="tootaja_id" />
+            <asp:BoundField DataField="tootaja_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="tootaja_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
             <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />
             <asp:BoundField DataField="telefon" HeaderText="Telefon" SortExpression="telefon" />
             <asp:BoundField DataField="e_post" HeaderText="E-post" SortExpression="e_post" />
-            <asp:CommandField ShowInsertButton="True" />
+            <asp:CommandField ShowInsertButton="True" InsertText="Lisa" CancelText="Tühista" NewText="Uus" />
         </Fields>
     </asp:DetailsView>
 
@@ -21,11 +21,11 @@
 
     <h3>Töötajad</h3>
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="tootaja_id"
-        DataSourceID="SqlDataSource1" EmptyDataText="There are no data records to display." CssClass="table"
+        DataSourceID="SqlDataSource1" EmptyDataText="Andmed puuduvad." CssClass="table"
         OnRowUpdated="GridView1_RowUpdated" OnRowDeleted="GridView1_RowDeleted">
         <Columns>
-            <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" />
-            <asp:BoundField DataField="tootaja_id" HeaderText="tootaja_id" ReadOnly="True" SortExpression="tootaja_id" />
+            <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" EditText="Muuda" DeleteText="Kustuta" UpdateText="Salvesta" CancelText="Tühista" />
+            <asp:BoundField DataField="tootaja_id" HeaderText="ID" ReadOnly="True" SortExpression="tootaja_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
             <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />

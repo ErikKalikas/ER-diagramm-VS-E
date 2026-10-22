@@ -9,8 +9,8 @@
         DataSourceID="SqlDataSource1_jarjekord" DefaultMode="Insert" Height="50px" Width="100%"
         OnItemInserted="DetailsView1_ItemInserted">
         <Fields>
-            <asp:BoundField DataField="jarjekord_id" HeaderText="jarjekord_id" InsertVisible="False" ReadOnly="True" SortExpression="jarjekord_id" />
-            <asp:TemplateField HeaderText="laps_id" SortExpression="laps_id">
+            <asp:BoundField DataField="jarjekord_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="jarjekord_id" />
+            <asp:TemplateField HeaderText="Laps" SortExpression="laps_id">
                 <InsertItemTemplate>
                     <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1_laps"
                         DataTextField="nimi" DataValueField="laps_id" SelectedValue='<%# Bind("laps_id") %>'>
@@ -20,7 +20,7 @@
                         SelectCommand="SELECT laps_id, eesnimi + ' ' + perenimi AS nimi FROM [Laps] ORDER BY perenimi"></asp:SqlDataSource>
                 </InsertItemTemplate>
             </asp:TemplateField>
-            <asp:TemplateField HeaderText="soovitud_ruhm_id" SortExpression="soovitud_ruhm_id">
+            <asp:TemplateField HeaderText="Soovitud rühm" SortExpression="soovitud_ruhm_id">
                 <InsertItemTemplate>
                     <asp:DropDownList ID="DropDownList2" runat="server" DataSourceID="SqlDataSource1_ruhm"
                         DataTextField="nimetus" DataValueField="ruhm_id" SelectedValue='<%# Bind("soovitud_ruhm_id") %>'>
@@ -30,7 +30,7 @@
                         SelectCommand="SELECT * FROM [Ruhm]"></asp:SqlDataSource>
                 </InsertItemTemplate>
             </asp:TemplateField>
-            <asp:TemplateField HeaderText="staatus" SortExpression="staatus">
+            <asp:TemplateField HeaderText="Staatus" SortExpression="staatus">
                 <InsertItemTemplate>
                     <asp:DropDownList ID="DropDownList3" runat="server" SelectedValue='<%# Bind("staatus") %>'>
                         <asp:ListItem>ootel</asp:ListItem>
@@ -40,7 +40,7 @@
                     </asp:DropDownList>
                 </InsertItemTemplate>
             </asp:TemplateField>
-            <asp:CommandField ShowInsertButton="True" />
+            <asp:CommandField ShowInsertButton="True" InsertText="Lisa" CancelText="Tühista" NewText="Uus" />
         </Fields>
     </asp:DetailsView>
 
@@ -74,7 +74,7 @@
         DataSourceID="SqlDataSource1_laps_lisa" DefaultMode="Insert" Height="50px" Width="100%"
         OnItemInserted="DetailsView2_ItemInserted">
         <Fields>
-            <asp:BoundField DataField="laps_id" HeaderText="laps_id" InsertVisible="False" ReadOnly="True" SortExpression="laps_id" />
+            <asp:BoundField DataField="laps_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="laps_id" />
             <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
             <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
             <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />
@@ -83,7 +83,7 @@
                     <asp:TextBox ID="TextBoxSynniaeg" runat="server" TextMode="Date" Text='<%# Bind("synniaeg") %>'></asp:TextBox>
                 </InsertItemTemplate>
             </asp:TemplateField>
-            <asp:CommandField ShowInsertButton="True" />
+            <asp:CommandField ShowInsertButton="True" InsertText="Lisa" CancelText="Tühista" NewText="Uus" />
         </Fields>
     </asp:DetailsView>
 
@@ -111,17 +111,17 @@
             <asp:TemplateField ShowHeader="False">
                 <ItemTemplate>
                     <%-- Edit/Delete ainult neil lastel, kes on järjekorras --%>
-                    <asp:LinkButton ID="LinkButtonEdit" runat="server" CausesValidation="False" CommandName="Edit" Text="Edit"
+                    <asp:LinkButton ID="LinkButtonEdit" runat="server" CausesValidation="False" CommandName="Edit" Text="Muuda"
                         Visible='<%# Not IsDBNull(Eval("jarjekord_id")) %>'></asp:LinkButton>
-                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Delete"
+                    <asp:LinkButton ID="LinkButtonDelete" runat="server" CausesValidation="False" CommandName="Delete" Text="Kustuta"
                         Visible='<%# Not IsDBNull(Eval("jarjekord_id")) %>'></asp:LinkButton>
                 </ItemTemplate>
                 <EditItemTemplate>
-                    <asp:LinkButton ID="LinkButtonUpdate" runat="server" CausesValidation="True" CommandName="Update" Text="Update"></asp:LinkButton>
-                    <asp:LinkButton ID="LinkButtonCancel" runat="server" CausesValidation="False" CommandName="Cancel" Text="Cancel"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonUpdate" runat="server" CausesValidation="True" CommandName="Update" Text="Salvesta"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButtonCancel" runat="server" CausesValidation="False" CommandName="Cancel" Text="Tühista"></asp:LinkButton>
                 </EditItemTemplate>
             </asp:TemplateField>
-            <asp:BoundField DataField="jarjekord_id" HeaderText="jarjekord_id" ReadOnly="True" />
+            <asp:BoundField DataField="jarjekord_id" HeaderText="Järjekorra ID" ReadOnly="True" />
             <asp:TemplateField HeaderText="Laps">
                 <ItemTemplate>
                     <asp:Label ID="LabelLaps" runat="server" Text='<%# Eval("nimi") %>'></asp:Label>
