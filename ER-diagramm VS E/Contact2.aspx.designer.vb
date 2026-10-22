@@ -29,9 +29,9 @@ Partial Public Class Contact2
     Protected WithEvents DetailsView1 As Global.System.Web.UI.WebControls.DetailsView
 
     '''<summary>
-    '''SqlDataSource1_ruhmas_olek control.
+    '''SqlDataSource1_laps_lisa control.
     '''</summary>
-    Protected WithEvents SqlDataSource1_ruhmas_olek As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents SqlDataSource1_laps_lisa As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''LabelTeade control.

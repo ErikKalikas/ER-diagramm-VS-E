@@ -45,14 +45,4 @@ Partial Public Class Contact3
     '''SqlDataSource1_jarjekord_tabel control.
     '''</summary>
     Protected WithEvents SqlDataSource1_jarjekord_tabel As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''DetailsView2 control.
-    '''</summary>
-    Protected WithEvents DetailsView2 As Global.System.Web.UI.WebControls.DetailsView
-
-    '''<summary>
-    '''SqlDataSource1_laps_lisa control.
-    '''</summary>
-    Protected WithEvents SqlDataSource1_laps_lisa As Global.System.Web.UI.WebControls.SqlDataSource
 End Class

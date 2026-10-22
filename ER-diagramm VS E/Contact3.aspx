@@ -1,12 +1,10 @@
 ﻿<%@ Page Title="Lisa järjekorda veebivorm" Language="VB" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Contact3.aspx.vb" Inherits="ER_diagramm_VS_E.Contact3" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="row">
-    <div class="col-md-6">
     <h2><%: Title %></h2>
 
     <asp:DetailsView ID="DetailsView1" runat="server" AutoGenerateRows="False" DataKeyNames="jarjekord_id"
-        DataSourceID="SqlDataSource1_jarjekord" DefaultMode="Insert" Height="50px" Width="100%"
+        DataSourceID="SqlDataSource1_jarjekord" DefaultMode="Insert" Height="50px" Width="400px"
         OnItemInserted="DetailsView1_ItemInserted">
         <Fields>
             <asp:BoundField DataField="jarjekord_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="jarjekord_id" />
@@ -65,39 +63,6 @@
             <asp:Parameter Name="jarjekord_id" Type="Int32" />
         </DeleteParameters>
     </asp:SqlDataSource>
-    </div>
-
-    <div class="col-md-6">
-    <h2>Lisa laps</h2>
-
-    <asp:DetailsView ID="DetailsView2" runat="server" AutoGenerateRows="False" DataKeyNames="laps_id"
-        DataSourceID="SqlDataSource1_laps_lisa" DefaultMode="Insert" Height="50px" Width="100%"
-        OnItemInserted="DetailsView2_ItemInserted">
-        <Fields>
-            <asp:BoundField DataField="laps_id" HeaderText="ID" InsertVisible="False" ReadOnly="True" SortExpression="laps_id" />
-            <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
-            <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
-            <asp:TemplateField HeaderText="Sünniaeg" SortExpression="synniaeg">
-                <InsertItemTemplate>
-                    <asp:TextBox ID="TextBoxSynniaeg" runat="server" TextMode="Date" Text='<%# Bind("synniaeg") %>'></asp:TextBox>
-                </InsertItemTemplate>
-            </asp:TemplateField>
-            <asp:CommandField ShowInsertButton="True" InsertText="Lisa" CancelText="Tühista" NewText="Uus" />
-        </Fields>
-    </asp:DetailsView>
-
-    <asp:SqlDataSource ID="SqlDataSource1_laps_lisa" runat="server"
-        ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
-        SelectCommand="SELECT [laps_id], [eesnimi], [perenimi], [synniaeg] FROM [Laps]"
-        InsertCommand="INSERT INTO [Laps] ([eesnimi], [perenimi], [synniaeg]) VALUES (@eesnimi, @perenimi, @synniaeg)">
-        <InsertParameters>
-            <asp:Parameter Name="eesnimi" Type="String" />
-            <asp:Parameter Name="perenimi" Type="String" />
-            <asp:Parameter Name="synniaeg" Type="DateTime" />
-        </InsertParameters>
-    </asp:SqlDataSource>
-    </div>
-    </div>
 
     <p><asp:Label ID="LabelTeade" runat="server" EnableViewState="False"></asp:Label></p>
 
