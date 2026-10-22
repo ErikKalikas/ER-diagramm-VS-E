@@ -5,17 +5,18 @@
 
     <p><asp:Label ID="LabelTeade" runat="server" EnableViewState="False"></asp:Label></p>
 
+    <div class="table-responsive">
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="tootaja_id,tootamine_id"
         DataSourceID="SqlDataSource1" EmptyDataText="Andmed puuduvad." CssClass="table"
         OnRowUpdated="GridView1_RowUpdated">
         <Columns>
             <asp:CommandField ShowEditButton="True" EditText="Muuda" UpdateText="Salvesta" CancelText="Tühista" />
             <asp:BoundField DataField="tootaja_id" HeaderText="ID" SortExpression="tootaja_id" ReadOnly="True" />
-            <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" />
-            <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" />
-            <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" />
-            <asp:BoundField DataField="telefon" HeaderText="Telefon" SortExpression="telefon" />
-            <asp:BoundField DataField="e_post" HeaderText="E-post" SortExpression="e_post" />
+            <asp:BoundField DataField="eesnimi" HeaderText="Eesnimi" SortExpression="eesnimi" ControlStyle-Width="110px" />
+            <asp:BoundField DataField="perenimi" HeaderText="Perenimi" SortExpression="perenimi" ControlStyle-Width="110px" />
+            <asp:BoundField DataField="isikukood" HeaderText="Isikukood" SortExpression="isikukood" ControlStyle-Width="115px" />
+            <asp:BoundField DataField="telefon" HeaderText="Telefon" SortExpression="telefon" ControlStyle-Width="95px" />
+            <asp:BoundField DataField="e_post" HeaderText="E-post" SortExpression="e_post" ControlStyle-Width="190px" />
             <asp:TemplateField HeaderText="Ametikoht" SortExpression="amet">
                 <ItemTemplate>
                     <asp:Label ID="LabelAmet" runat="server" Text='<%# Eval("amet_tekst") %>'></asp:Label>
@@ -54,7 +55,7 @@
                 </ItemTemplate>
                 <EditItemTemplate>
                     <%-- Tühi = täna --%>
-                    <asp:TextBox ID="TextBoxAlgus" runat="server" TextMode="Date" Text='<%# Bind("alguse_kp", "{0:yyyy-MM-dd}") %>'></asp:TextBox>
+                    <asp:TextBox ID="TextBoxAlgus" runat="server" TextMode="Date" Width="135px" Text='<%# Bind("alguse_kp", "{0:yyyy-MM-dd}") %>'></asp:TextBox>
                 </EditItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Lõpp" SortExpression="lopu_kp">
@@ -68,12 +69,13 @@
                         <asp:ListItem Value="tootab">töötab</asp:ListItem>
                         <asp:ListItem Value="kuupaev">lõpetab kuupäeval</asp:ListItem>
                     </asp:DropDownList>
-                    <asp:TextBox ID="TextBoxLopp" runat="server" TextMode="Date" Text='<%# Bind("lopu_kp", "{0:yyyy-MM-dd}") %>'
+                    <asp:TextBox ID="TextBoxLopp" runat="server" TextMode="Date" Width="135px" Text='<%# Bind("lopu_kp", "{0:yyyy-MM-dd}") %>'
                         CssClass='<%# If(Eval("lopu_valik").ToString() = "kuupaev", "", "d-none") %>'></asp:TextBox>
                 </EditItemTemplate>
             </asp:TemplateField>
         </Columns>
     </asp:GridView>
+    </div>
 
     <%-- LEFT JOIN: näidatakse ka töötajaid, kellel pole ametikohta.
          Muutmisel: 1) uuendame tabelit Tootaja,
@@ -119,7 +121,9 @@
             <asp:Parameter Name="lopu_valik" Type="String" />
             <asp:Parameter Name="lopu_kp" Type="DateTime" />
             <asp:Parameter Name="tootaja_id" Type="Int32" />
-            <asp:Parameter Name="tootamine_id" Type="Int32" />
+            <%-- Ilma tüübita: töötajal, kellel pole ametikohta, on tootamine_id = NULL (DBNull),
+                 mida Int32-ks teisendada ei saa --%>
+            <asp:Parameter Name="tootamine_id" />
         </UpdateParameters>
     </asp:SqlDataSource>
 </asp:Content>
