@@ -45,13 +45,17 @@
     <asp:SqlDataSource ID="SqlDataSource1_ruhmas_olek" runat="server"
         ConnectionString="<%$ ConnectionStrings:LasteaedConnectionString2 %>"
         SelectCommand="SELECT * FROM [Ruhmas_olek]"
-        InsertCommand="DECLARE @algus date = ISNULL(@alguse_kp, CAST(GETDATE() AS date));
+        InsertCommand="SET XACT_ABORT ON;
+            BEGIN TRY BEGIN TRAN;
+            DECLARE @algus date = ISNULL(@alguse_kp, CAST(GETDATE() AS date));
             UPDATE [Ruhmas_olek] SET [lopu_kp] = DATEADD(day, -1, @algus)
                 WHERE [laps_id] = @laps_id AND [lopu_kp] IS NULL AND [alguse_kp] BETWEEN '1900-01-01' AND DATEADD(day, -1, @algus);
             DELETE FROM [Ruhmas_olek] WHERE [laps_id] = @laps_id AND [alguse_kp] = @algus;
             INSERT INTO [Ruhmas_olek] ([laps_id], [ruhm_id], [alguse_kp]) VALUES (@laps_id, @ruhm_id, @algus);
             UPDATE [Jarjekord] SET [staatus] = N'vastu võetud'
-                WHERE [laps_id] = @laps_id AND [staatus] IN (N'ootel', N'pakutud');">
+                WHERE [laps_id] = @laps_id AND [staatus] IN (N'ootel', N'pakutud');
+            COMMIT TRAN; END TRY
+            BEGIN CATCH IF @@TRANCOUNT != 0 ROLLBACK TRAN; THROW; END CATCH;">
         <InsertParameters>
             <asp:Parameter Name="laps_id" Type="Int32" />
             <asp:Parameter Name="ruhm_id" Type="Int32" />
